@@ -13,13 +13,19 @@ import java.sql.Statement;
  */
 public class AddProductServlet extends HttpServlet {
 
+    private final String databaseUrl;
+
+    public AddProductServlet(String databaseUrl) {
+        this.databaseUrl = databaseUrl;
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String name = request.getParameter("name");
         long price = Long.parseLong(request.getParameter("price"));
 
         try {
-            try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
+            try (Connection c = DriverManager.getConnection(databaseUrl)) {
                 String sql = "INSERT INTO PRODUCT " +
                         "(NAME, PRICE) VALUES (\"" + name + "\"," + price + ")";
                 Statement stmt = c.createStatement();
