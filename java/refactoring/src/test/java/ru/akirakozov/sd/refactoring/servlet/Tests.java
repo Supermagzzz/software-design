@@ -10,6 +10,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import ru.akirakozov.sd.refactoring.data.Product;
+import ru.akirakozov.sd.refactoring.database.Database;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,9 +37,10 @@ public class Tests {
     private static final Integer MAX_RANDOM_PRODUCTS_COUNT = 20;
     private static final Integer MAX_RANDOM_STRING_LENGTH = 10;
     private static final Integer MAX_RANDOM_PRICE = 10;
+    private static final Random random = new Random();
 
     private static String databaseUrl;
-    private static final Random random = new Random();
+    private static Database database;
 
     @Mock
     private HttpServletRequest request;
@@ -58,26 +60,17 @@ public class Tests {
         Path databaseDirectory = Files.createTempDirectory(randomString(MAX_RANDOM_STRING_LENGTH));
         databaseDirectory.toFile().deleteOnExit();
         databaseUrl = "jdbc:sqlite:" + databaseDirectory.resolve("test.db");
+        database = new Database(databaseUrl);
     }
 
     @Before
     public void createDatabase() {
-        executeUpdate("DROP TABLE IF EXISTS PRODUCT");
-        executeUpdate(  "CREATE TABLE PRODUCT" +
+        database.executeUpdate("DROP TABLE IF EXISTS PRODUCT");
+        database.executeUpdate(  "CREATE TABLE PRODUCT" +
                 "(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                 " NAME           TEXT    NOT NULL, " +
                 " PRICE          INT     NOT NULL)"
         );
-    }
-
-    private void executeUpdate(String sql) {
-        try (Connection connection = DriverManager.getConnection(databaseUrl)) {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(sql);
-            statement.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private String getStringResponse(Runnable doGet) {

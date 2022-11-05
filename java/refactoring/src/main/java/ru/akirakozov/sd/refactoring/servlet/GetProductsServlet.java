@@ -1,5 +1,7 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
+import ru.akirakozov.sd.refactoring.database.Database;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,35 +16,28 @@ import java.sql.Statement;
  */
 public class GetProductsServlet extends HttpServlet {
 
-    private final String databaseUrl;
+    private final Database database;
 
     public GetProductsServlet(String databaseUrl) {
-        this.databaseUrl = databaseUrl;
+        this.database = new Database(databaseUrl);
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        try {
-            try (Connection c = DriverManager.getConnection(databaseUrl)) {
-                Statement stmt = c.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT");
+        database.executeQuery("SELECT * FROM PRODUCT", (rs) -> {
+            try {
                 response.getWriter().println("<html><body>");
 
                 while (rs.next()) {
-                    String  name = rs.getString("name");
-                    int price  = rs.getInt("price");
+                    String name = rs.getString("name");
+                    int price = rs.getInt("price");
                     response.getWriter().println(name + "\t" + price + "</br>");
                 }
                 response.getWriter().println("</body></html>");
-
-                rs.close();
-                stmt.close();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
+        });
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
     }

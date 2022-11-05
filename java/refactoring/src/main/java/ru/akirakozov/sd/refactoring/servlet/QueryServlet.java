@@ -1,5 +1,7 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
+import ru.akirakozov.sd.refactoring.database.Database;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,10 +16,10 @@ import java.sql.Statement;
  */
 public class QueryServlet extends HttpServlet {
 
-    private final String databaseUrl;
+    private final Database database;
 
     public QueryServlet(String databaseUrl) {
-        this.databaseUrl = databaseUrl;
+        this.database = new Database(databaseUrl);
     }
 
     @Override
@@ -25,54 +27,41 @@ public class QueryServlet extends HttpServlet {
         String command = request.getParameter("command");
 
         if ("max".equals(command)) {
-            try {
-                try (Connection c = DriverManager.getConnection(databaseUrl)) {
-                    Statement stmt = c.createStatement();
-                    ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1");
+            database.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1", (rs) -> {
+                try {
                     response.getWriter().println("<html><body>");
                     response.getWriter().println("<h1>Product with max price: </h1>");
 
                     while (rs.next()) {
-                        String  name = rs.getString("name");
-                        int price  = rs.getInt("price");
+                        String name = rs.getString("name");
+                        int price = rs.getInt("price");
                         response.getWriter().println(name + "\t" + price + "</br>");
                     }
                     response.getWriter().println("</body></html>");
-
-                    rs.close();
-                    stmt.close();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            });
         } else if ("min".equals(command)) {
-            try {
-                try (Connection c = DriverManager.getConnection(databaseUrl)) {
-                    Statement stmt = c.createStatement();
-                    ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1");
+            database.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1", (rs) -> {
+                try {
                     response.getWriter().println("<html><body>");
                     response.getWriter().println("<h1>Product with min price: </h1>");
 
                     while (rs.next()) {
-                        String  name = rs.getString("name");
-                        int price  = rs.getInt("price");
+                        String name = rs.getString("name");
+                        int price = rs.getInt("price");
                         response.getWriter().println(name + "\t" + price + "</br>");
                     }
                     response.getWriter().println("</body></html>");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
 
-                    rs.close();
-                    stmt.close();
                 }
-
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            });
         } else if ("sum".equals(command)) {
-            try {
-                try (Connection c = DriverManager.getConnection(databaseUrl)) {
-                    Statement stmt = c.createStatement();
-                    ResultSet rs = stmt.executeQuery("SELECT SUM(price) FROM PRODUCT");
+            database.executeQuery("SELECT SUM(price) FROM PRODUCT", (rs) -> {
+                try {
                     response.getWriter().println("<html><body>");
                     response.getWriter().println("Summary price: ");
 
@@ -80,19 +69,13 @@ public class QueryServlet extends HttpServlet {
                         response.getWriter().println(rs.getInt(1));
                     }
                     response.getWriter().println("</body></html>");
-
-                    rs.close();
-                    stmt.close();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            });
         } else if ("count".equals(command)) {
-            try {
-                try (Connection c = DriverManager.getConnection(databaseUrl)) {
-                    Statement stmt = c.createStatement();
-                    ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM PRODUCT");
+            database.executeQuery("SELECT COUNT(*) FROM PRODUCT", (rs) -> {
+                try {
                     response.getWriter().println("<html><body>");
                     response.getWriter().println("Number of products: ");
 
@@ -100,14 +83,10 @@ public class QueryServlet extends HttpServlet {
                         response.getWriter().println(rs.getInt(1));
                     }
                     response.getWriter().println("</body></html>");
-
-                    rs.close();
-                    stmt.close();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            });
         } else {
             response.getWriter().println("Unknown command: " + command);
         }
