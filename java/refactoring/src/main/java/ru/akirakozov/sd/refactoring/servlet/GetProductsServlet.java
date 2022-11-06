@@ -1,6 +1,7 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
 import ru.akirakozov.sd.refactoring.database.Database;
+import ru.akirakozov.sd.refactoring.queries.GetProductsQuery;
 import ru.akirakozov.sd.refactoring.utils.HtmlPrinter;
 
 import javax.servlet.http.HttpServlet;
@@ -17,28 +18,15 @@ import java.sql.Statement;
  */
 public class GetProductsServlet extends HttpServlet {
 
-    private final Database database;
+    private final GetProductsQuery getProductsQuery;
 
     public GetProductsServlet(Database database) {
-        this.database = database;
+        this.getProductsQuery = new GetProductsQuery(database);
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        database.executeQuery("SELECT * FROM PRODUCT", (rs) -> {
-            try {
-                HtmlPrinter htmlPrinter = new HtmlPrinter();
-
-                while (rs.next()) {
-                    String name = rs.getString("name");
-                    int price = rs.getInt("price");
-                    htmlPrinter.println(name + "\t" + price + "</br>");
-                }
-                response.getWriter().print(htmlPrinter.get());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
+        response.getWriter().print(getProductsQuery.makeResponse(request));
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
     }
