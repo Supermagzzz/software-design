@@ -104,6 +104,16 @@ public class Tests {
         return response.substring(EXPECTED_START.length(), response.length() - EXPECTED_END.length()).trim();
     }
 
+    private String getProductsResponse() {
+        return getStringResponse(() -> {
+            try {
+                new GetProductsServlet(databaseUrl).doGet(request, response);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        });
+    }
+
     private Map<Product, Integer> getProductsFromHtmlAnswer(String answer) {
         String[] productStrings = cropHtmlTags(answer).split("</br>");
 
@@ -121,18 +131,11 @@ public class Tests {
     }
 
     private void checkGetProducts(Map<Product, Integer> products) {
-        String getProductsResponse = getStringResponse(() -> {
-            try {
-                new GetProductsServlet(databaseUrl).doGet(request, response);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        });
-        assertEquals(products, getProductsFromHtmlAnswer(getProductsResponse));
+        assertEquals(products, getProductsFromHtmlAnswer(getProductsResponse()));
     }
 
     Integer getMinMaxResult(String response) {
-        String stringWithPrice = cropHtmlTags(response).replace("</br>", "");
+        String stringWithPrice = cropHtmlTags(response).replace("</br>", "").replace("\n", "");;
         // <h1>Product with *** price: </h1> \t price
         String[] data = stringWithPrice.split("\t");
         assertEquals(2, data.length);
@@ -140,7 +143,7 @@ public class Tests {
     }
 
     Integer getCountOrSumResult(String response) {
-        String stringWithPrice = cropHtmlTags(response).replace("</br>", "");
+        String stringWithPrice = cropHtmlTags(response).replace("</br>", "").replace("\n", "");
         // Summary price: result
         // or
         // Number of products: result
@@ -156,7 +159,7 @@ public class Tests {
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
-        }).replace("\n", "");
+        });
     }
 
     private void checkMax(Integer result) {
@@ -199,6 +202,65 @@ public class Tests {
         checkGetProducts(Map.of(apple, 1));
         checkAddProduct(banana);
         checkGetProducts(Map.of(apple, 1, banana, 1));
+    }
+
+    @Test
+    public void testAddProductHtml() {
+        Product apple = new Product("apple", 10);
+        checkAddProduct(apple);
+        String result = """
+                <html><body>
+                apple	10</br>
+                </body></html>""";
+        assertEquals(getProductsResponse(), result);
+    }
+
+    @Test
+    public void testMaxProductHtml() {
+        Product apple = new Product("apple", 10);
+        checkAddProduct(apple);
+        String result = """
+                <html><body>
+                <h1>Product with max price: </h1>
+                apple	10</br>
+                </body></html>""";
+        assertEquals(getQueryResponse("max"), result);
+    }
+
+    @Test
+    public void testMinProductHtml() {
+        Product apple = new Product("apple", 10);
+        checkAddProduct(apple);
+        String result = """
+                <html><body>
+                <h1>Product with min price: </h1>
+                apple	10</br>
+                </body></html>""";
+        assertEquals(getQueryResponse("min"), result);
+    }
+
+    @Test
+    public void testCountProductHtml() {
+        Product apple = new Product("apple", 10);
+        checkAddProduct(apple);
+        String result = """
+                <html><body>
+                Number of products:\s
+                1
+                </body></html>""";
+        assertEquals(getQueryResponse("count"), result);
+    }
+
+    @Test
+    public void testSumProductHtml() {
+        Product apple = new Product("apple", 10);
+        checkAddProduct(apple);
+        String result = """
+                <html><body>
+                Summary price:\s
+                10
+                </body></html>""";
+        assertEquals(getQueryResponse("sum"), result);
     }
 
     @Test
