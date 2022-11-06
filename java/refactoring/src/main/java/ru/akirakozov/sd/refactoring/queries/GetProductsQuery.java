@@ -4,6 +4,7 @@ import ru.akirakozov.sd.refactoring.database.Database;
 import ru.akirakozov.sd.refactoring.utils.HtmlPrinter;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLException;
 
 public class GetProductsQuery extends Query {
     public GetProductsQuery(Database database) {
@@ -20,7 +21,7 @@ public class GetProductsQuery extends Query {
                     int price = rs.getInt("price");
                     printer.println(name + "\t" + price + "</br>");
                 }
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         });

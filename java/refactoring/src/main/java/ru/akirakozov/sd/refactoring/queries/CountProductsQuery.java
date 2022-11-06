@@ -4,6 +4,7 @@ import ru.akirakozov.sd.refactoring.database.Database;
 import ru.akirakozov.sd.refactoring.utils.HtmlPrinter;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLException;
 
 public class CountProductsQuery extends Query {
     public CountProductsQuery(Database database) {
@@ -19,7 +20,7 @@ public class CountProductsQuery extends Query {
                 if (rs.next()) {
                     printer.println(Integer.toString(rs.getInt(1)));
                 }
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         });
