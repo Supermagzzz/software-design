@@ -25,7 +25,7 @@ public class GetProductsServlet extends BaseServlet {
     }
 
     @Override
-    protected String makeResponse(HttpServletRequest request) throws IOException {
+    protected String makeResponse(HttpServletRequest request) {
         return getProductsQuery.processQuery(request);
     }
 }

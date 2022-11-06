@@ -26,7 +26,7 @@ public class QueryServlet extends BaseServlet {
     }
 
     @Override
-    protected String makeResponse(HttpServletRequest request) throws IOException {
+    protected String makeResponse(HttpServletRequest request) {
         String command = request.getParameter("command");
 
         if (this.queryMap.containsKey(command)) {

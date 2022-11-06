@@ -22,7 +22,7 @@ public class AddProductServlet extends BaseServlet {
     }
 
     @Override
-    protected String makeResponse(HttpServletRequest request) throws IOException {
+    protected String makeResponse(HttpServletRequest request) {
         String name = request.getParameter("name");
         long price = Long.parseLong(request.getParameter("price"));
         database.executeUpdate("INSERT INTO PRODUCT " +
