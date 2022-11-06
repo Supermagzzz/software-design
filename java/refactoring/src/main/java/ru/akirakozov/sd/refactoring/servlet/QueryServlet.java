@@ -1,6 +1,7 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
 import ru.akirakozov.sd.refactoring.database.Database;
+import ru.akirakozov.sd.refactoring.utils.HtmlPrinter;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -29,15 +30,15 @@ public class QueryServlet extends HttpServlet {
         if ("max".equals(command)) {
             database.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1", (rs) -> {
                 try {
-                    response.getWriter().println("<html><body>");
-                    response.getWriter().println("<h1>Product with max price: </h1>");
+                    HtmlPrinter printer = new HtmlPrinter();
+                    printer.println("<h1>Product with max price: </h1>");
 
                     while (rs.next()) {
                         String name = rs.getString("name");
                         int price = rs.getInt("price");
-                        response.getWriter().println(name + "\t" + price + "</br>");
+                        printer.println(name + "\t" + price + "</br>");
                     }
-                    response.getWriter().println("</body></html>");
+                    response.getWriter().print(printer.get());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -45,15 +46,15 @@ public class QueryServlet extends HttpServlet {
         } else if ("min".equals(command)) {
             database.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1", (rs) -> {
                 try {
-                    response.getWriter().println("<html><body>");
-                    response.getWriter().println("<h1>Product with min price: </h1>");
+                    HtmlPrinter printer = new HtmlPrinter();
+                    printer.println("<h1>Product with min price: </h1>");
 
                     while (rs.next()) {
                         String name = rs.getString("name");
                         int price = rs.getInt("price");
-                        response.getWriter().println(name + "\t" + price + "</br>");
+                        printer.println(name + "\t" + price + "</br>");
                     }
-                    response.getWriter().println("</body></html>");
+                    response.getWriter().print(printer.get());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
 
@@ -62,13 +63,13 @@ public class QueryServlet extends HttpServlet {
         } else if ("sum".equals(command)) {
             database.executeQuery("SELECT SUM(price) FROM PRODUCT", (rs) -> {
                 try {
-                    response.getWriter().println("<html><body>");
-                    response.getWriter().println("Summary price: ");
+                    HtmlPrinter printer = new HtmlPrinter();
+                    printer.println("Summary price: ");
 
                     if (rs.next()) {
-                        response.getWriter().println(rs.getInt(1));
+                        printer.println(Integer.toString(rs.getInt(1)));
                     }
-                    response.getWriter().println("</body></html>");
+                    response.getWriter().print(printer.get());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -76,13 +77,13 @@ public class QueryServlet extends HttpServlet {
         } else if ("count".equals(command)) {
             database.executeQuery("SELECT COUNT(*) FROM PRODUCT", (rs) -> {
                 try {
-                    response.getWriter().println("<html><body>");
-                    response.getWriter().println("Number of products: ");
+                    HtmlPrinter printer = new HtmlPrinter();
+                    printer.println("Number of products: ");
 
                     if (rs.next()) {
-                        response.getWriter().println(rs.getInt(1));
+                        printer.println(Integer.toString(rs.getInt(1)));
                     }
-                    response.getWriter().println("</body></html>");
+                    response.getWriter().print(printer.get());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
