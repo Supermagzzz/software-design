@@ -18,10 +18,10 @@ public class QueryServlet extends BaseServlet {
 
     public QueryServlet(Database database) {
         this.queryMap = Map.of(
-                "max", new MaxProductsQuery(database),
-                "min", new MinProductsQuery(database),
-                "sum", new SumProductsQuery(database),
-                "count", new CountProductsQuery(database)
+            "max", new MaxProductsQuery(database),
+            "min", new MinProductsQuery(database),
+            "sum", new SumProductsQuery(database),
+            "count", new CountProductsQuery(database)
         );
     }
 
@@ -35,5 +35,4 @@ public class QueryServlet extends BaseServlet {
             return "Unknown command: " + command;
         }
     }
-
 }

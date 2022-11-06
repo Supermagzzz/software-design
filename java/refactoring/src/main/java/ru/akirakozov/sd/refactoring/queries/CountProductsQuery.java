@@ -16,7 +16,6 @@ public class CountProductsQuery extends Query {
         database.executeQuery("SELECT COUNT(*) FROM PRODUCT", (rs) -> {
             try {
                 printer.println("Number of products: ");
-
                 if (rs.next()) {
                     printer.println(Integer.toString(rs.getInt(1)));
                 }

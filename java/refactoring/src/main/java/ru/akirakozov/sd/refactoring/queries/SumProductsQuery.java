@@ -16,7 +16,6 @@ public class SumProductsQuery extends Query {
         database.executeQuery("SELECT SUM(price) FROM PRODUCT", (rs) -> {
             try {
                 printer.println("Summary price: ");
-
                 if (rs.next()) {
                     printer.println(Integer.toString(rs.getInt(1)));
                 }

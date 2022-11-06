@@ -19,5 +19,4 @@ public abstract class BaseServlet extends HttpServlet {
     }
 
     protected abstract String makeResponse(HttpServletRequest request) throws IOException;
-
 }
