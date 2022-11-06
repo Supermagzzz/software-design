@@ -14,16 +14,8 @@ public class SumProductsQuery extends Query {
     @Override
     public String processQuery(HttpServletRequest request) {
         HtmlPrinter printer = new HtmlPrinter();
-        database.executeQuery("SELECT SUM(price) FROM PRODUCT", (rs) -> {
-            try {
-                printer.println("Summary price: ");
-                if (rs.next()) {
-                    printer.println(Integer.toString(rs.getInt(1)));
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        printer.println("Summary price: ");
+        printer.println(Integer.toString(database.getSumProducts()));
         return printer.get();
     }
 }

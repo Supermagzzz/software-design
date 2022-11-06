@@ -15,19 +15,12 @@ public class MinProductsQuery extends Query {
     @Override
     public String processQuery(HttpServletRequest request) {
         HtmlPrinter printer = new HtmlPrinter();
-        database.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1", (rs) -> {
-            try {
-                printer.printHeader("Product with min price: ");
-                printer.println();
-                while (rs.next()) {
-                    String name = rs.getString("name");
-                    int price = rs.getInt("price");
-                    printer.printProduct(new Product(name, price));
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        printer.printHeader("Product with min price: ");
+        printer.println();
+        Product product = database.getMinProduct();
+        if (product != null) {
+            printer.printProduct(product);
+        }
         return printer.get();
     }
 }

@@ -15,19 +15,12 @@ public class MaxProductsQuery extends Query {
     @Override
     public String processQuery(HttpServletRequest request) {
         HtmlPrinter printer = new HtmlPrinter();
-        database.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1", (rs) -> {
-            try {
-                printer.printHeader("Product with max price: ");
-                printer.println();
-                while (rs.next()) {
-                    String name = rs.getString("name");
-                    int price = rs.getInt("price");
-                    printer.printProduct(new Product(name, price));
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        printer.printHeader("Product with max price: ");
+        printer.println();
+        Product product = database.getMaxProduct();
+        if (product != null) {
+            printer.printProduct(product);
+        }
         return printer.get();
     }
 }

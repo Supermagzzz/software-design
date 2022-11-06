@@ -1,5 +1,6 @@
 package ru.akirakozov.sd.refactoring.queries;
 
+import ru.akirakozov.sd.refactoring.data.Product;
 import ru.akirakozov.sd.refactoring.database.Database;
 import ru.akirakozov.sd.refactoring.utils.HtmlPrinter;
 
@@ -12,10 +13,8 @@ public class AddProductsQuery extends Query {
 
     @Override
     public String processQuery(HttpServletRequest request) {
-        String name = request.getParameter("name");
-        long price = Long.parseLong(request.getParameter("price"));
-        database.executeUpdate("INSERT INTO PRODUCT " +
-                "(NAME, PRICE) VALUES (\"" + name + "\"," + price + ")");
+        database.addProduct(new Product(request.getParameter("name"),
+                Integer.parseInt(request.getParameter("price"))));
         return "OK";
     }
 }

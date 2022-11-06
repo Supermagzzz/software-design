@@ -1,5 +1,6 @@
 package ru.akirakozov.sd.refactoring.queries;
 
+import ru.akirakozov.sd.refactoring.data.Product;
 import ru.akirakozov.sd.refactoring.database.Database;
 import ru.akirakozov.sd.refactoring.utils.HtmlPrinter;
 
@@ -14,19 +15,9 @@ public class GetProductsQuery extends Query {
     @Override
     public String processQuery(HttpServletRequest request) {
         HtmlPrinter printer = new HtmlPrinter();
-        database.executeQuery("SELECT * FROM PRODUCT", (rs) -> {
-            try {
-                while (rs.next()) {
-                    String name = rs.getString("name");
-                    int price = rs.getInt("price");
-                    printer.print(name + "\t" + price);
-                    printer.printNextLine();
-                    printer.println();
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        for (Product product : database.getAllProducts()) {
+            printer.printProduct(product);
+        }
         return printer.get();
     }
 }
