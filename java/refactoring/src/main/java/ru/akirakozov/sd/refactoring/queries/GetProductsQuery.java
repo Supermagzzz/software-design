@@ -11,7 +11,7 @@ public class GetProductsQuery extends Query {
     }
 
     @Override
-    public String makeResponse(HttpServletRequest request) {
+    public String processQuery(HttpServletRequest request) {
         HtmlPrinter printer = new HtmlPrinter();
         database.executeQuery("SELECT * FROM PRODUCT", (rs) -> {
             try {

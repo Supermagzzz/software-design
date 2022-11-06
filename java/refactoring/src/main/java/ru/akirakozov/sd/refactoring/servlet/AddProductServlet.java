@@ -13,7 +13,7 @@ import java.sql.Statement;
 /**
  * @author akirakozov
  */
-public class AddProductServlet extends HttpServlet {
+public class AddProductServlet extends BaseServlet {
 
     private final Database database;
 
@@ -22,13 +22,11 @@ public class AddProductServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected String makeResponse(HttpServletRequest request) throws IOException {
         String name = request.getParameter("name");
         long price = Long.parseLong(request.getParameter("price"));
         database.executeUpdate("INSERT INTO PRODUCT " +
                 "(NAME, PRICE) VALUES (\"" + name + "\"," + price + ")");
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().println("OK");
+        return "OK";
     }
 }

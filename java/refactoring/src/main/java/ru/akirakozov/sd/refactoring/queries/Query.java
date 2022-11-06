@@ -3,6 +3,8 @@ package ru.akirakozov.sd.refactoring.queries;
 import ru.akirakozov.sd.refactoring.database.Database;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public abstract class Query {
     protected final Database database;
@@ -11,5 +13,5 @@ public abstract class Query {
         this.database = database;
     }
 
-    public abstract String makeResponse(HttpServletRequest request);
+    public abstract String processQuery(HttpServletRequest request);
 }

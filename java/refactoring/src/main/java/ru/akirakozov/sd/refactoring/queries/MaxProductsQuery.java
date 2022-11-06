@@ -11,7 +11,7 @@ public class MaxProductsQuery extends Query {
     }
 
     @Override
-    public String makeResponse(HttpServletRequest request) {
+    public String processQuery(HttpServletRequest request) {
         HtmlPrinter printer = new HtmlPrinter();
         database.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1", (rs) -> {
             try {

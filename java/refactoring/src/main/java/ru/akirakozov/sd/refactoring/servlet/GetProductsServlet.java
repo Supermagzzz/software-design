@@ -16,7 +16,7 @@ import java.sql.Statement;
 /**
  * @author akirakozov
  */
-public class GetProductsServlet extends HttpServlet {
+public class GetProductsServlet extends BaseServlet {
 
     private final GetProductsQuery getProductsQuery;
 
@@ -25,9 +25,7 @@ public class GetProductsServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.getWriter().print(getProductsQuery.makeResponse(request));
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
+    protected String makeResponse(HttpServletRequest request) throws IOException {
+        return getProductsQuery.processQuery(request);
     }
 }

@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * @author akirakozov
  */
-public class QueryServlet extends HttpServlet {
+public class QueryServlet extends BaseServlet {
 
     private final Map<String, Query> queryMap;
 
@@ -26,17 +26,14 @@ public class QueryServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected String makeResponse(HttpServletRequest request) throws IOException {
         String command = request.getParameter("command");
 
         if (this.queryMap.containsKey(command)) {
-            response.getWriter().print(this.queryMap.get(command).makeResponse(request));
+            return this.queryMap.get(command).processQuery(request);
         } else {
-            response.getWriter().println("Unknown command: " + command);
+            return "Unknown command: " + command;
         }
-
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
     }
 
 }
