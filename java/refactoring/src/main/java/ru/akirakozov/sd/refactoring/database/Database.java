@@ -72,59 +72,47 @@ public class Database {
         return products;
     }
 
-    public Product getMaxProduct() {
-        AtomicReference<Product> maxProduct = new AtomicReference<>();
-        executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1", (rs) -> {
+    private Product selectProduct(String sql) {
+        AtomicReference<Product> product = new AtomicReference<>();
+        executeQuery(sql, (rs) -> {
             try {
-                while (rs.next()) {
-                    maxProduct.set(new Product(rs.getString("name"), rs.getInt("price")));
+                if (rs.next()) {
+                    product.set(new Product(rs.getString("name"), rs.getInt("price")));
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         });
-        return maxProduct.get();
+        return product.get();
+    }
+
+    private int selectInt(String sql) {
+        AtomicInteger result = new AtomicInteger();
+        executeQuery(sql, (rs) -> {
+            try {
+                if (rs.next()) {
+                    result.set(rs.getInt(1));
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return result.get();
+    }
+
+    public Product getMaxProduct() {
+        return selectProduct("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1");
     }
 
     public Product getMinProduct() {
-        AtomicReference<Product> minProduct = new AtomicReference<>();
-        executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1", (rs) -> {
-            try {
-                while (rs.next()) {
-                    minProduct.set(new Product(rs.getString("name"), rs.getInt("price")));
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        return minProduct.get();
+        return selectProduct("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1");
     }
 
     public Integer getCountProducts() {
-        AtomicInteger result = new AtomicInteger();
-        executeQuery("SELECT COUNT(*) FROM PRODUCT", (rs) -> {
-            try {
-                if (rs.next()) {
-                    result.set(rs.getInt(1));
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        return result.get();
+        return selectInt("SELECT COUNT(*) FROM PRODUCT");
     }
 
     public Integer getSumProducts() {
-        AtomicInteger result = new AtomicInteger();
-        executeQuery("SELECT SUM(price) FROM PRODUCT", (rs) -> {
-            try {
-                if (rs.next()) {
-                    result.set(rs.getInt(1));
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        return result.get();
+        return selectInt("SELECT SUM(price) FROM PRODUCT");
     }
 }
