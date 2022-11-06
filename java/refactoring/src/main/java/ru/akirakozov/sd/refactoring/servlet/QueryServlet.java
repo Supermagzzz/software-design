@@ -19,8 +19,8 @@ public class QueryServlet extends HttpServlet {
 
     private final Database database;
 
-    public QueryServlet(String databaseUrl) {
-        this.database = new Database(databaseUrl);
+    public QueryServlet(Database database) {
+        this.database = database;
     }
 
     @Override

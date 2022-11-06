@@ -11,6 +11,18 @@ public class Database {
         this.databaseUrl = databaseUrl;
     }
 
+    public void dropIfExists() {
+        executeUpdate("DROP TABLE IF EXISTS PRODUCT");
+    }
+
+    public void createProductDatabase() {
+        executeUpdate(  "CREATE TABLE IF NOT EXISTS PRODUCT" +
+                "(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                " NAME           TEXT    NOT NULL, " +
+                " PRICE          INT     NOT NULL)"
+        );
+    }
+
     public void executeQuery(String sql, Consumer<ResultSet> applyToResult) {
         try (Connection connection = DriverManager.getConnection(databaseUrl)) {
             Statement statement = connection.createStatement();

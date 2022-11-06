@@ -19,8 +19,8 @@ public class GetProductsServlet extends HttpServlet {
 
     private final Database database;
 
-    public GetProductsServlet(String databaseUrl) {
-        this.database = new Database(databaseUrl);
+    public GetProductsServlet(Database database) {
+        this.database = database;
     }
 
     @Override

@@ -21,10 +21,6 @@ import java.io.StringWriter;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.*;
 
 import static org.mockito.Mockito.when;
@@ -65,12 +61,8 @@ public class Tests {
 
     @Before
     public void createDatabase() {
-        database.executeUpdate("DROP TABLE IF EXISTS PRODUCT");
-        database.executeUpdate(  "CREATE TABLE PRODUCT" +
-                "(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                " NAME           TEXT    NOT NULL, " +
-                " PRICE          INT     NOT NULL)"
-        );
+        database.dropIfExists();
+        database.createProductDatabase();
     }
 
     private String getStringResponse(Runnable doGet) {
@@ -90,7 +82,7 @@ public class Tests {
         when(request.getParameter("price")).thenReturn(String.valueOf(product.getPrice()));
         assertEquals("OK", getStringResponse(() -> {
             try {
-                new AddProductServlet(databaseUrl).doGet(request, response);
+                new AddProductServlet(database).doGet(request, response);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
@@ -107,7 +99,7 @@ public class Tests {
     private String getProductsResponse() {
         return getStringResponse(() -> {
             try {
-                new GetProductsServlet(databaseUrl).doGet(request, response);
+                new GetProductsServlet(database).doGet(request, response);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
@@ -155,7 +147,7 @@ public class Tests {
         when(request.getParameter("command")).thenReturn(command);
         return getStringResponse(() -> {
             try {
-                new QueryServlet(databaseUrl).doGet(request, response);
+                new QueryServlet(database).doGet(request, response);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
