@@ -19,7 +19,9 @@ public class GetProductsQuery extends Query {
                 while (rs.next()) {
                     String name = rs.getString("name");
                     int price = rs.getInt("price");
-                    printer.println(name + "\t" + price + "</br>");
+                    printer.print(name + "\t" + price);
+                    printer.printNextLine();
+                    printer.println();
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);

@@ -1,5 +1,6 @@
 package ru.akirakozov.sd.refactoring.queries;
 
+import ru.akirakozov.sd.refactoring.data.Product;
 import ru.akirakozov.sd.refactoring.database.Database;
 import ru.akirakozov.sd.refactoring.utils.HtmlPrinter;
 
@@ -16,11 +17,12 @@ public class MaxProductsQuery extends Query {
         HtmlPrinter printer = new HtmlPrinter();
         database.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1", (rs) -> {
             try {
-                printer.println("<h1>Product with max price: </h1>");
+                printer.printHeader("Product with max price: ");
+                printer.println();
                 while (rs.next()) {
                     String name = rs.getString("name");
                     int price = rs.getInt("price");
-                    printer.println(name + "\t" + price + "</br>");
+                    printer.printProduct(new Product(name, price));
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
