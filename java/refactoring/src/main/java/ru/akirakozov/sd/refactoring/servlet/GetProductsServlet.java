@@ -13,9 +13,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-/**
- * @author akirakozov
- */
 public class GetProductsServlet extends BaseServlet {
 
     private final GetProductsQuery getProductsQuery;

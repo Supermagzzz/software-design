@@ -9,9 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
-/**
- * @author akirakozov
- */
 public class QueryServlet extends BaseServlet {
 
     private final Map<String, Query> queryMap;

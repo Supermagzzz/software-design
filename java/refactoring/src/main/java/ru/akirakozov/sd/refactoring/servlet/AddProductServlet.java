@@ -1,6 +1,7 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
 import ru.akirakozov.sd.refactoring.database.Database;
+import ru.akirakozov.sd.refactoring.queries.AddProductsQuery;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -10,23 +11,16 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 
-/**
- * @author akirakozov
- */
 public class AddProductServlet extends BaseServlet {
 
-    private final Database database;
+    private final AddProductsQuery addProductsQuery;
 
     public AddProductServlet(Database database) {
-        this.database = database;
+        this.addProductsQuery = new AddProductsQuery(database);
     }
 
     @Override
     protected String makeResponse(HttpServletRequest request) {
-        String name = request.getParameter("name");
-        long price = Long.parseLong(request.getParameter("price"));
-        database.executeUpdate("INSERT INTO PRODUCT " +
-                "(NAME, PRICE) VALUES (\"" + name + "\"," + price + ")");
-        return "OK";
+        return addProductsQuery.processQuery(request);
     }
 }
